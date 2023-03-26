@@ -1,5 +1,5 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
-EXPOSE 5000
+EXPOSE 5001
 COPY . .
-ENTRYPOINT ["dotnet", SyZero.OpenAI.Web.dll"]
+ENTRYPOINT ["dotnet", "SyZero.OpenAI.Web.dll"]

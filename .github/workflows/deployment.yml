@@ -55,4 +55,4 @@ jobs:
             docker push harbor.syzero.com/syzero/syzero.openai:${{ env.IMAGE_VERSION }}
             docker stop syzero.openai
             docker rm syzero.openai
-            docker run -d -p 5001:5001 --name=syzero.openai harbor.syzero.com/syzero/syzero.openai:${{ env.IMAGE_VERSION }}
+            docker run -d -p 5002:5001 --name=syzero.openai harbor.syzero.com/syzero/syzero.openai:${{ env.IMAGE_VERSION }}
