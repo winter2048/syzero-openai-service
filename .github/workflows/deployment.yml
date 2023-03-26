@@ -52,7 +52,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             docker login harbor.syzero.com -u ${{ secrets.HARBOR_DOCKERHUB_USERNAME }} -p ${{ secrets.HARBOR_DOCKERHUB_TOKEN }}
-            docker push harbor.syzero.com/syzero/syzero.openai:${{ env.IMAGE_VERSION }}
             docker stop syzero.openai
             docker rm syzero.openai
+            docker pull harbor.syzero.com/syzero/syzero.openai:${{ env.IMAGE_VERSION }}
             docker run -d -p 5002:5001 --name=syzero.openai harbor.syzero.com/syzero/syzero.openai:${{ env.IMAGE_VERSION }}
