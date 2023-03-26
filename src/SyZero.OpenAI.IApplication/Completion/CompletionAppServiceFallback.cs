@@ -11,7 +11,7 @@ namespace SyZero.OpenAI.IApplication.Completion
 {
     public class CompletionAppServiceFallback : ICompletionAppService, IFallback
     {
-        public Task<string> Completion(CompletionDto completionDto)
+        public Task<string> Send(CompletionDto completionDto)
         {
             throw new NotImplementedException();
         }

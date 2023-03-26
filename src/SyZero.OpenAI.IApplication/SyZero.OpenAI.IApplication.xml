@@ -15,7 +15,7 @@
             <summary>
             删除会话
             </summary>
-            <param name="dto"></param>
+            <param name="sessionId"></param>
             <returns></returns>
         </member>
         <member name="M:SyZero.OpenAI.IApplication.Chat.IChatAppService.GetSession(System.String)">

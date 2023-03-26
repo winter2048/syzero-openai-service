@@ -50,7 +50,7 @@ namespace SyZero.OpenAI.Application.Completion
             _openAIService = openAIService;
         }
 
-        public async Task<string> Completion(CompletionDto completionDto)
+        public async Task<string> Send(CompletionDto completionDto)
         {
             CheckPermission("");
             var res = await _openAIService.Completion(new Core.OpenAI.Dto.CompletionRequest()

@@ -13,6 +13,6 @@ namespace SyZero.OpenAI.IApplication.Completion
     public interface ICompletionAppService : IApplicationServiceBase
     {
         [ApiMethod(HttpMethod.POST)]
-        Task<string> Completion(CompletionDto completionDto);
+        Task<string> Send(CompletionDto completionDto);
     }
 }
