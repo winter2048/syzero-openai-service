@@ -1,0 +1,58 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Deployment
+
+# run-name: Deploy to ${{ inputs.deploy_target }} by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+        - dev
+        - prod
+      imageVersion:
+        description: 'Version'
+        required: false
+        default: 'dev'
+        type: string
+  workflow_run:
+    workflows: [Official]
+    types: [completed]
+    branches: [dev]
+
+env:
+  GB_NUGET_TOKEN: ${{secrets.GB_NUGET_TOKEN}}
+  IMAGE_VERSION: dev
+  ENVIRONMENT: dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: initialization 
+        run: |
+          if [ "${{ inputs.imageVersion }}" != "" ]; then
+            echo "IMAGE_VERSION=${{ inputs.imageVersion }}" >> $GITHUB_ENV
+          fi
+          if [ "${{ inputs.environment }}" != "" ]; then
+            echo "ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
+          fi
+
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            docker login harbor.syzero.com -u ${{ secrets.HARBOR_DOCKERHUB_USERNAME }} -p ${{ secrets.HARBOR_DOCKERHUB_TOKEN }}
+            docker push harbor.syzero.com/syzero/syzero.openai:${{ env.IMAGE_VERSION }}
+            docker stop syzero.openai
+            docker rm syzero.openai
+            docker run -d -p 5001:5001 --name=syzero.openai harbor.syzero.com/syzero/syzero.openai:${{ env.IMAGE_VERSION }}
