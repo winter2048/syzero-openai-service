@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SyZero.OpenAI.IApplication</name>
+    </assembly>
+    <members>
+        <member name="M:SyZero.OpenAI.IApplication.Chat.IChatAppService.CreateSession">
+            <summary>
+            创建会话
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SyZero.OpenAI.IApplication.Chat.IChatAppService.DelSession(System.String)">
+            <summary>
+            删除会话
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SyZero.OpenAI.IApplication.Chat.IChatAppService.GetSession(System.String)">
+            <summary>
+            查询会话
+            </summary>
+            <param name="sessionId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SyZero.OpenAI.IApplication.Chat.IChatAppService.SendMessage(SyZero.OpenAI.IApplication.Chat.Dto.SendMessageDto)">
+            <summary>
+            发送消息
+            </summary>
+            <param name="messageDto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SyZero.OpenAI.IApplication.Chat.IChatAppService.MySession">
+            <summary>
+            获取我的所以会话
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SyZero.OpenAI.IApplication.Image.IImageAppService.Generation(System.String)">
+            <summary>
+            生成图片
+            </summary>
+            <param name="msg"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SyZero.OpenAI.IApplication.Image.IImageAppService.Edit(SyZero.OpenAI.IApplication.Image.Dto.EditImageDto)">
+            <summary>
+            编辑图片
+            </summary>
+            <param name="editImageDto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SyZero.OpenAI.IApplication.Image.IImageAppService.Variation(SyZero.OpenAI.IApplication.Image.Dto.VariationImageDto)">
+            <summary>
+            重新生成
+            </summary>
+            <param name="editImageDto"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

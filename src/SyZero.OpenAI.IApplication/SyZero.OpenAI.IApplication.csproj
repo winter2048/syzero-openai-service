@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile>SyZero.OpenAI.IApplication.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
