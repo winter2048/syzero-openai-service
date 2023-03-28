@@ -57,7 +57,7 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GB_NUGET_TOKEN }}
           directory: ./syzero-openai-service
           branch: ${{ github.ref }}
 
