@@ -60,6 +60,7 @@ jobs:
           github_token: ${{ secrets.GB_NUGET_TOKEN }}
           directory: ./syzero-openai-service
           branch: ${{ github.ref }}
+          force: true
 
   pushImage:
     needs: build
