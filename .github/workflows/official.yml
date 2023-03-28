@@ -49,13 +49,21 @@ jobs:
       - name: Commit app
         run: |
           cd syzero-openai-service
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-          git add .
-          git commit -m "update app" -a
+          $gf=$(git diff)
+          if ("$gf" -ne "") {
+            echo "IS_GIT_CHANGE=true" >> $env:GITHUB_ENV
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git config --global user.name "github-actions[bot]"
+            git add .
+            git commit -m "update app" -a
+          } else {
+            echo "IS_GIT_CHANGE=false" >> $env:GITHUB_ENV
+          }
+        shell: powershell
 
       - name: Push changes
         uses: ad-m/github-push-action@master
+        if: env.IS_GIT_CHANGE == 'true'
         with:
           github_token: ${{ secrets.GB_NUGET_TOKEN }}
           directory: ./syzero-openai-service
