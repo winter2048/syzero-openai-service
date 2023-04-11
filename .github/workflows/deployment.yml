@@ -40,18 +40,22 @@ jobs:
     steps:
       - name: initialization 
         run: |
+          imageVersion=${{ env.IMAGE_VERSION }}
+          environment=${{ env.ENVIRONMENT }}
           if [ "${{ inputs.imageVersion }}" != "" ]; then
             echo "IMAGE_VERSION=${{ inputs.imageVersion }}" >> $GITHUB_ENV
+            imageVersion=${{ inputs.imageVersion }}
           fi
           if [ "${{ inputs.environment }}" != "" ]; then
             echo "ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
+            environment=${{ inputs.environment }}
           fi
-          if [ "${{ inputs.environment }}" == "Production" ]; then
+          if [ "$environment" == "Production" ]; then
             echo "SSH_HOST=${{ secrets.SSH_HOST }}" >> $GITHUB_ENV
             echo "SSH_USERNAME=${{ secrets.SSH_USERNAME }}" >> $GITHUB_ENV
             echo "SSH_PASSWORD=${{ secrets.SSH_PASSWORD }}" >> $GITHUB_ENV
           fi
-          if [ "${{ inputs.environment }}" == "Test" ]; then
+          if [ "$environment" == "Test" ]; then
             echo "SSH_HOST=${{ secrets.SSH_HOST_TEST }}" >> $GITHUB_ENV
             echo "SSH_USERNAME=${{ secrets.SSH_USERNAME_TEST }}" >> $GITHUB_ENV
             echo "SSH_PASSWORD=${{ secrets.SSH_PASSWORD_TEST }}" >> $GITHUB_ENV
