@@ -99,15 +99,23 @@ namespace SyZero.OpenAI.Application.Chat
             var chatSession = await GetSession(messageDto.SessionId);
             chatSession.Messages.Add(new ChatMessageDto(MessageRoleEnum.User, messageDto.Message));
 
-            var res = await _openAIService.ChatCompletion(new Core.OpenAI.Dto.ChatRequest()
+            var res =  _openAIService.ChatCompletionAsync(new Core.OpenAI.Dto.ChatRequest()
             {
                 Model = "gpt-3.5-turbo",
                 Messages = chatSession.Messages.Select(p => new Core.OpenAI.Dto.Message { Role = p.Role.ToString().ToLower(), Content = p.Content }).ToList()
             });
 
-            chatSession.Messages.Add(new ChatMessageDto(MessageRoleEnum.Assistant, res.Choices[0].Message.Content));
+            string content = "";
+            await  foreach (var item in res)
+            {
+                content += item.Choices[0]?.Delta?.Content;
+                Console.Write(item.Choices[0]?.Delta?.Content);
+            }
+
+            chatSession.Messages.Add(new ChatMessageDto(MessageRoleEnum.Assistant, content));
             await _cache.SetAsync($"ChatSession:{SySession.UserId}:{messageDto.SessionId}", chatSession.Messages);
-            return res.Choices[0].Message.Content;
+            // return res.Choices[0].Message.Content;
+            return content;
         }
     }
 }

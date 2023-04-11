@@ -8,6 +8,7 @@ using SyZero.Web.Common;
 using Newtonsoft.Json;
 using RestSharp;
 using SyZero.Util;
+using System.IO;
 
 namespace SyZero.OpenAI.Core.OpenAI
 {
@@ -17,6 +18,32 @@ namespace SyZero.OpenAI.Core.OpenAI
         {
             var res = RestHelper.PostJson<ChatResponse>("https://api.openai.com/v1/chat/completions", JsonConvert.SerializeObject(chatRequest), $"Bearer {AppConfig.GetSection("OpenAIToken")}");
             return res.Entity;
+        }
+
+        public async IAsyncEnumerable<ChatResponse> ChatCompletionAsync(ChatRequest chatRequest)
+        {
+            var request = new RestRequest("https://api.openai.com/v1/chat/completions", Method.Post);
+            var client = AutofacUtil.GetService<RestClient>();
+            request.RequestFormat = DataFormat.Json;
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Authorization", $"Bearer {AppConfig.GetSection("OpenAIToken")}");
+            chatRequest.Stream = true;
+            request.AddBody(JsonConvert.SerializeObject(chatRequest));
+        
+            var response = await client.DownloadStreamAsync(request);
+            var stream = new StreamReader(response, Encoding.UTF8);
+            string line;
+            while ((line = stream.ReadLine()) != null)
+            {
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    line = line.Substring("data: ".Length);
+                    if (line != "[DONE]")
+                    {
+                        yield return JsonConvert.DeserializeObject<ChatResponse>(line);
+                    }
+                }
+            }
         }
 
         public async Task<ImageResponse> ImageGeneration(ImageRequest chatRequest)
