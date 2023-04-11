@@ -14,6 +14,9 @@ namespace SyZero.OpenAI.Core.OpenAI.Dto
 
         [JsonProperty("messages")]
         public List<Message> Messages { get; set; }
+
+        [JsonProperty("stream")]
+        public bool Stream { get; set; } = false;
     }
 
     public class ChatResponse
@@ -41,6 +44,9 @@ namespace SyZero.OpenAI.Core.OpenAI.Dto
 
         [JsonProperty("message")]
         public Message Message { get; set; }
+
+        [JsonProperty("delta")]
+        public Message Delta { get; set; }
 
         [JsonProperty("finish_reason")]
         public string FinishReason { get; set; }

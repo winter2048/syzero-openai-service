@@ -14,8 +14,8 @@ on:
         default: 'dev'
         type: choice
         options:
-        - dev
-        - prod
+        - Test
+        - Production
       imageVersion:
         description: 'Version'
         required: false
@@ -27,9 +27,12 @@ on:
     branches: [dev]
 
 env:
-  GB_NUGET_TOKEN: ${{secrets.GB_NUGET_TOKEN}}
+  SSH_HOST: ${{ secrets.SSH_HOST }}
+  SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+  SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+  IMAGE_NAME: syzero.openai.service
   IMAGE_VERSION: dev
-  ENVIRONMENT: dev
+  ENVIRONMENT: Test
 
 jobs:
   deploy:
@@ -43,16 +46,26 @@ jobs:
           if [ "${{ inputs.environment }}" != "" ]; then
             echo "ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
           fi
+          if [ "${{ inputs.environment }}" == "Production" ]; then
+            echo "SSH_HOST=${{ secrets.SSH_HOST }}" >> $GITHUB_ENV
+            echo "SSH_USERNAME=${{ secrets.SSH_USERNAME }}" >> $GITHUB_ENV
+            echo "SSH_PASSWORD=${{ secrets.SSH_PASSWORD }}" >> $GITHUB_ENV
+          fi
+          if [ "${{ inputs.environment }}" == "Test" ]; then
+            echo "SSH_HOST=${{ secrets.SSH_HOST_TEST }}" >> $GITHUB_ENV
+            echo "SSH_USERNAME=${{ secrets.SSH_USERNAME_TEST }}" >> $GITHUB_ENV
+            echo "SSH_PASSWORD=${{ secrets.SSH_PASSWORD_TEST }}" >> $GITHUB_ENV
+          fi
 
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
+          host: ${{ env.SSH_HOST }}
+          username: ${{ env.SSH_USERNAME }}
+          password: ${{ env.SSH_PASSWORD }}
           script: |
             docker login harbor.syzero.com -u ${{ secrets.HARBOR_DOCKERHUB_USERNAME }} -p ${{ secrets.HARBOR_DOCKERHUB_TOKEN }}
-            docker stop syzero.openai.service
-            docker rm syzero.openai.service
-            docker pull harbor.syzero.com/syzero/syzero.openai.service:${{ env.IMAGE_VERSION }}
-            docker run -d -p 5002:5001 --name=syzero.openai.service harbor.syzero.com/syzero/syzero.openai.service:${{ env.IMAGE_VERSION }}
+            docker stop ${{ env.IMAGE_NAME }}
+            docker rm ${{ env.IMAGE_NAME }}
+            docker pull harbor.syzero.com/syzero/${{ env.IMAGE_NAME }}:${{ env.IMAGE_VERSION }}
+            docker run -d -p 5002:5001 --name=${{ env.IMAGE_NAME }} -e "ASPNETCORE_ENVIRONMENT=${{ env.ENVIRONMENT }}" harbor.syzero.com/syzero/${{ env.IMAGE_NAME }}:${{ env.IMAGE_VERSION }}
