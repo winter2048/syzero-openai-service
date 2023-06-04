@@ -38,7 +38,7 @@ namespace SyZero.OpenAI.IApplication.Chat
             return null;
         }
 
-        public Task<string[]> MySession()
+        public Task<List<ChatSessionDto>> MySession()
         {
             _logger.Error("Fallback => ChatAppService:Chat");
             return null;

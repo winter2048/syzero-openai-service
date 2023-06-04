@@ -46,7 +46,7 @@ namespace SyZero.OpenAI.IApplication.Chat
         /// </summary>
         /// <returns></returns>
         [ApiMethod(HttpMethod.GET, "/api/SyZero.OpenAI/Chat/Sessions")]
-        Task<string[]> MySession();
+        Task<List<ChatSessionDto>> MySession();
     }
 }
 

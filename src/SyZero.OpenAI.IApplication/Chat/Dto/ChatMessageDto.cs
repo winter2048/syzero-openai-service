@@ -13,10 +13,13 @@ namespace SyZero.OpenAI.IApplication.Chat.Dto
         public ChatMessageDto(MessageRoleEnum role, string content) { 
             this.Role = role;
             this.Content = content;
+            this.Date = DateTime.Now;
         }
 
         public MessageRoleEnum Role { get; set; }
 
         public string Content { get; set; }
+
+        public DateTime Date { get; set; }
     }
 }
