@@ -22,6 +22,7 @@ using SyZero.OpenAI.Repository;
 using SyZero.OpenAI.Web.Filter;
 using System.Net;
 using SyZero.OpenAI.Core.OpenAI;
+using SyZero.OpenAI.Web.Hub;
 
 namespace SyZero.OpenAI.Web
 {
@@ -58,6 +59,8 @@ namespace SyZero.OpenAI.Web
             //Swagger
             services.AddSwagger();
             services.AddSingleton<OpenAIService>();
+
+            services.AddSignalR();
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
@@ -110,6 +113,11 @@ namespace SyZero.OpenAI.Web
             });
             app.UseConsul();
             app.UseSyZero();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<ChatHub>("/chathub");
+            });
         }
     }
 }
