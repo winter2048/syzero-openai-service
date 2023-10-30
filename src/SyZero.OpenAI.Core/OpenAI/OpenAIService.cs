@@ -14,15 +14,17 @@ namespace SyZero.OpenAI.Core.OpenAI
 {
     public class OpenAIService
     {
+        private string baseUrl => AppConfig.GetSection("OpenAIUrl") ?? "https://api.openai.com";
+
         public async Task<ChatResponse> ChatCompletion(ChatRequest chatRequest)
         {
-            var res = RestHelper.PostJson<ChatResponse>("https://api.openai.com/v1/chat/completions", JsonConvert.SerializeObject(chatRequest), $"Bearer {AppConfig.GetSection("OpenAIToken")}");
+            var res = RestHelper.PostJson<ChatResponse>($"{baseUrl}/v1/chat/completions", JsonConvert.SerializeObject(chatRequest), $"Bearer {AppConfig.GetSection("OpenAIToken")}");
             return res.Entity;
         }
 
         public async IAsyncEnumerable<ChatResponse> ChatCompletionAsync(ChatRequest chatRequest)
         {
-            var request = new RestRequest("https://api.openai.com/v1/chat/completions", Method.Post);
+            var request = new RestRequest($"{baseUrl}/v1/chat/completions", Method.Post);
             var client = AutofacUtil.GetService<RestClient>();
             request.RequestFormat = DataFormat.Json;
             request.AddHeader("Content-Type", "application/json");
@@ -48,13 +50,13 @@ namespace SyZero.OpenAI.Core.OpenAI
 
         public async Task<ImageResponse> ImageGeneration(ImageRequest chatRequest)
         {
-            var res = RestHelper.PostJson<ImageResponse>("https://api.openai.com/v1/images/generations", JsonConvert.SerializeObject(chatRequest), $"Bearer {AppConfig.GetSection("OpenAIToken")}");
+            var res = RestHelper.PostJson<ImageResponse>($"{baseUrl}/v1/images/generations", JsonConvert.SerializeObject(chatRequest), $"Bearer {AppConfig.GetSection("OpenAIToken")}");
             return res.Entity;
         }
 
         public async Task<ImageResponse> ImageEdit(ImageEditRequest chatRequest)
         {
-            var request = new RestRequest("https://api.openai.com/v1/images/edits", Method.Post);
+            var request = new RestRequest($"{baseUrl}/v1/images/edits", Method.Post);
             request.AlwaysMultipartFormData = true;
             request.AddHeader("Authorization", $"Bearer {AppConfig.GetSection("OpenAIToken")}");
             request.AddFile("image", chatRequest.Image, "image.png");
@@ -72,7 +74,7 @@ namespace SyZero.OpenAI.Core.OpenAI
 
         public async Task<ImageResponse> ImageVariation(ImageEditRequest chatRequest)
         {
-            var request = new RestRequest("https://api.openai.com/v1/images/variations", Method.Post);
+            var request = new RestRequest($"{baseUrl}/v1/images/variations", Method.Post);
             request.AlwaysMultipartFormData = true;
             request.AddHeader("Authorization", $"Bearer {AppConfig.GetSection("OpenAIToken")}");
             request.AddFile("image", chatRequest.Image, "image.png");
@@ -85,7 +87,7 @@ namespace SyZero.OpenAI.Core.OpenAI
 
         public async Task<CompletionResponse> Completion(CompletionRequest completionRequest)
         {
-            var res = RestHelper.PostJson<CompletionResponse>("https://api.openai.com/v1/completions", JsonConvert.SerializeObject(completionRequest), $"Bearer {AppConfig.GetSection("OpenAIToken")}");
+            var res = RestHelper.PostJson<CompletionResponse>($"{baseUrl}/v1/completions", JsonConvert.SerializeObject(completionRequest), $"Bearer {AppConfig.GetSection("OpenAIToken")}");
             return res.Entity;
         }
     }
