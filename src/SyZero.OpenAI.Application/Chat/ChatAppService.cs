@@ -110,6 +110,21 @@ namespace SyZero.OpenAI.Application.Chat
             return list;
         }
 
+        public async Task<bool> PutSession(string sessionId, List<ChatMessageDto> messages)
+        {
+            CheckPermission("");
+            if (!_cache.Exist($"ChatSession:{SySession.UserId}:{sessionId}"))
+            {
+                throw new SyMessageException("会话不存在！");
+            }
+            if (messages == null)
+            {
+                throw new SyMessageException("消息不能为空！");
+            }
+            await _cache.SetAsync($"ChatSession:{SySession.UserId}:{sessionId}", messages);
+            return true;
+        }
+
         public async Task<string> SendMessage(SendMessageDto messageDto)
         {
             CheckPermission("");

@@ -66,21 +66,23 @@ namespace SyZero.OpenAI.Web
         public void ConfigureContainer(ContainerBuilder builder)
         {
             //使用SyZero
-            builder.RegisterModule<SyZeroModule>();
+            builder.AddSyZero();
             //使用AutoMapper
-            builder.RegisterModule<AutoMapperModule>();
+            builder.AddSyZeroAutoMapper();
             //使用SqlSugar仓储
-            //builder.RegisterModule<RepositoryModule>();
+            builder.AddSyZeroSqlSugar<DbContext>();
             //注入控制器
-            builder.RegisterModule<SyZeroControllerModule>();
+            builder.AddSyZeroController();
             //注入Log4Net
-            builder.RegisterModule<Log4NetModule>();
+            builder.AddSyZeroLog4Net();
             //注入Redis
-            builder.RegisterModule<RedisModule>();
+            builder.AddSyZeroRedis();
             //注入公共层
-            builder.RegisterModule<CommonModule>();
+            builder.AddSyZeroCommon();
+            //注入Consul
+            builder.AddConsul();
             //注入Feign
-            builder.RegisterModule<FeignModule>();
+            builder.AddSyZeroFeign();
         }
 
 
@@ -104,7 +106,7 @@ namespace SyZero.OpenAI.Web
             {
                 endpoints.MapControllers();
             });
-           app.UseSwagger();
+            app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SyZero.Authorization.Web API V1");
@@ -118,6 +120,7 @@ namespace SyZero.OpenAI.Web
             {
                 endpoints.MapHub<ChatHub>("/chathub");
             });
+            app.InitTables();
         }
     }
 }

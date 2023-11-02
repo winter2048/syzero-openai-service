@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\syzero-core\src\SyZero.Core\SyZero.AutoMapper\SyZero.AutoMapper.csproj" />
+    <ProjectReference Include="..\..\..\syzero-core\src\SyZero.Core\SyZero.SqlSugar\SyZero.SqlSugar.csproj" />
     <ProjectReference Include="..\..\..\syzero-core\src\SyZero.Core\SyZero.Web.Common\SyZero.Web.Common.csproj" />
   </ItemGroup>
 
