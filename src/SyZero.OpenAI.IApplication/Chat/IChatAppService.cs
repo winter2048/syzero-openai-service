@@ -18,6 +18,14 @@ namespace SyZero.OpenAI.IApplication.Chat
         Task<string> CreateSession();
 
         /// <summary>
+        /// 更新会话
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [ApiMethod(HttpMethod.PUT, "/api/SyZero.OpenAI/Chat/Session/{sessionId}")]
+        Task<bool> PutSession(string sessionId, List<ChatMessageDto> messages);
+
+        /// <summary>
         /// 删除会话
         /// </summary>
         /// <param name="sessionId"></param>
@@ -46,7 +54,7 @@ namespace SyZero.OpenAI.IApplication.Chat
         /// </summary>
         /// <returns></returns>
         [ApiMethod(HttpMethod.GET, "/api/SyZero.OpenAI/Chat/Sessions")]
-        Task<string[]> MySession();
+        Task<List<ChatSessionDto>> MySession();
     }
 }
 

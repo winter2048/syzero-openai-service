@@ -53,9 +53,14 @@ namespace SyZero.OpenAI.Application.Chat
         public async Task<string> CreateSession()
         {
             CheckPermission("");
-            var sessionId = Guid.NewGuid().ToString();
-            var messages = new List<ChatMessageDto>();
-            await _cache.SetAsync($"ChatSession:{SySession.UserId}:{sessionId}", messages);
+            var keys = _cache.GetKeys($"ChatSession:{SySession.UserId}:*");
+            var sessionId = keys.Select(p => p.Split(":").Last()).FirstOrDefault(sessionId => _cache.Get<List<ChatMessageDto>>($"ChatSession:{SySession.UserId}:{sessionId}").Count == 0);
+            if (sessionId == null)
+            {
+                sessionId = Guid.NewGuid().ToString();
+                var messages = new List<ChatMessageDto>();
+                await _cache.SetAsync($"ChatSession:{SySession.UserId}:{sessionId}", messages);
+            }
             return sessionId;
         }
 
@@ -86,11 +91,38 @@ namespace SyZero.OpenAI.Application.Chat
             };
         }
 
-        public async Task<string[]> MySession()
+        public async Task<List<ChatSessionDto>> MySession()
         {
             CheckPermission("");
+            List<ChatSessionDto> list = new List<ChatSessionDto>();
             var keys = _cache.GetKeys($"ChatSession:{SySession.UserId}:*");
-            return keys.Select(p => p.Split(":").Last()).ToArray();
+            foreach (var sessionId in keys.Select(p => p.Split(":").Last()).ToArray())
+            {
+                var messages = _cache.Get<List<ChatMessageDto>>($"ChatSession:{SySession.UserId}:{sessionId}");
+                list.Add(new ChatSessionDto()
+                {
+                    Id = sessionId,
+                    Messages = messages
+                }
+                );
+            }
+            list = list.OrderByDescending(p => p.Messages?.LastOrDefault()?.Date ?? DateTime.Now).ToList();
+            return list;
+        }
+
+        public async Task<bool> PutSession(string sessionId, List<ChatMessageDto> messages)
+        {
+            CheckPermission("");
+            if (!_cache.Exist($"ChatSession:{SySession.UserId}:{sessionId}"))
+            {
+                throw new SyMessageException("会话不存在！");
+            }
+            if (messages == null)
+            {
+                throw new SyMessageException("消息不能为空！");
+            }
+            await _cache.SetAsync($"ChatSession:{SySession.UserId}:{sessionId}", messages);
+            return true;
         }
 
         public async Task<string> SendMessage(SendMessageDto messageDto)

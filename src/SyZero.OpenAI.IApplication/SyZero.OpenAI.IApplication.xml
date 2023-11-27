@@ -11,6 +11,13 @@
             <param name="dto"></param>
             <returns></returns>
         </member>
+        <member name="M:SyZero.OpenAI.IApplication.Chat.IChatAppService.PutSession(System.String,System.Collections.Generic.List{SyZero.OpenAI.IApplication.Chat.Dto.ChatMessageDto})">
+            <summary>
+            更新会话
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
         <member name="M:SyZero.OpenAI.IApplication.Chat.IChatAppService.DelSession(System.String)">
             <summary>
             删除会话
@@ -36,6 +43,41 @@
             <summary>
             获取我的所以会话
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SyZero.OpenAI.IApplication.Chat.ISceneAppService.CreateScene(SyZero.OpenAI.IApplication.Chat.Dto.SceneDto)">
+            <summary>
+            创建场景
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SyZero.OpenAI.IApplication.Chat.ISceneAppService.PutScene(System.String,SyZero.OpenAI.IApplication.Chat.Dto.SceneDto)">
+            <summary>
+            修改场景
+            </summary>
+            <param name="sceneId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SyZero.OpenAI.IApplication.Chat.ISceneAppService.GetScene(System.String)">
+            <summary>
+            获取场景
+            </summary>
+            <param name="sceneId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SyZero.OpenAI.IApplication.Chat.ISceneAppService.MyScene">
+            <summary>
+            获取我的所以场景
+            </summary>
+            <param name="sceneId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SyZero.OpenAI.IApplication.Chat.ISceneAppService.DelScene(System.String)">
+            <summary>
+            删除场景
+            </summary>
+            <param name="sceneId"></param>
             <returns></returns>
         </member>
         <member name="M:SyZero.OpenAI.IApplication.Image.IImageAppService.Generation(System.String)">
