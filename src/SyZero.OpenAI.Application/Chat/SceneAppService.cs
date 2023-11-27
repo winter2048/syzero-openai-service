@@ -81,7 +81,7 @@ namespace SyZero.OpenAI.Application.Chat
         public async Task<List<SceneDto>> MyScene()
         {
             CheckPermission("");
-            var scene = await _sceneRepository.GetListAsync(p => p.CreateUser == SySession.UserId || p.CreateUser == null );
+            var scene = await _sceneRepository.GetListAsync(p => p.CreateUser == SySession.UserId || p.IsDefault);
             return ObjectMapper.Map<List<SceneDto>>(scene.OrderByDescending(p => p.IsDefault).ToList());
         }
 
