@@ -22,6 +22,7 @@ using System.Data;
 using SqlSugar.Extensions;
 using SyZero.OpenAI.Core.OpenAI;
 using SqlSugar;
+using System.Text.RegularExpressions;
 
 namespace SyZero.OpenAI.Application.Chat
 {
@@ -134,7 +135,7 @@ namespace SyZero.OpenAI.Application.Chat
             var res =  _openAIService.ChatCompletionAsync(new Core.OpenAI.Dto.ChatRequest()
             {
                 Model = "gpt-3.5-turbo",
-                Messages = chatSession.Messages.Select(p => new Core.OpenAI.Dto.Message { Role = p.Role.ToString().ToLower(), Content = p.Content }).ToList()
+                Messages = chatSession.Messages.Where(p => !p.Content.Contains("data:image/png;base64")).Select(p => new Core.OpenAI.Dto.Message { Role = p.Role.ToString().ToLower(), Content = p.Content }).ToList()
             });
 
             string content = "";
@@ -142,6 +143,15 @@ namespace SyZero.OpenAI.Application.Chat
             {
                 content += item.Choices[0]?.Delta?.Content;
                 Console.Write(item.Choices[0]?.Delta?.Content);
+            }
+
+            // 判断是否生成图片
+            Match imageMatch = Regex.Match(content, @"(?<=\$\[image\]\()(.*?)(?=\))");
+            if (imageMatch.Success)
+            {
+                string imageContent = imageMatch.Groups[1].Value;
+                string imageBase64 = "data:image/png;base64," + (await _openAIService.ImageGeneration(new Core.OpenAI.Dto.ImageRequest(imageContent))).Data[0].Base64;
+                content = @$"![{imageContent}]({imageBase64})";
             }
 
             chatSession.Messages.Add(new ChatMessageDto(MessageRoleEnum.Assistant, content));
