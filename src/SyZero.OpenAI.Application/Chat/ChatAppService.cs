@@ -134,7 +134,7 @@ namespace SyZero.OpenAI.Application.Chat
 
             var res =  _openAIService.ChatCompletionAsync(new Core.OpenAI.Dto.ChatRequest()
             {
-                Model = "gpt-3.5-turbo",
+                Model = messageDto.Model,
                 Messages = chatSession.Messages.Where(p => !p.Content.Contains("data:image/png;base64")).Select(p => new Core.OpenAI.Dto.Message { Role = p.Role.ToString().ToLower(), Content = p.Content }).ToList()
             });
 
