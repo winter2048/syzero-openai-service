@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dynamitey.DynamicObjects;
 using Google.Protobuf.WellKnownTypes;
@@ -76,8 +77,8 @@ namespace SyZero.OpenAI.Web.Hub
 
                 var res = _openAIService.ChatCompletionAsync(new Core.OpenAI.Dto.ChatRequest()
                 {
-                    Model = "gpt-3.5-turbo",
-                    Messages = chatSession.Messages.Select(p => new Core.OpenAI.Dto.Message { Role = p.Role.ToString().ToLower(), Content = p.Content }).ToList()
+                    Model = messageDto.Model,
+                    Messages = chatSession.Messages.Where(p=> !p.Content.Contains("data:image/png;base64")).Select(p => new Core.OpenAI.Dto.Message { Role = p.Role.ToString().ToLower(), Content = p.Content }).ToList()
                 });
 
                 chatSession.Messages.Add(new ChatMessageDto(MessageRoleEnum.Assistant, ""));
@@ -87,6 +88,17 @@ namespace SyZero.OpenAI.Web.Hub
                 {
                     chatSession.Messages.LastOrDefault(p=>p.Role == MessageRoleEnum.Assistant).Content += item.Choices[0]?.Delta?.Content;
                     Console.Write(item.Choices[0]?.Delta?.Content);
+                    await _cache.SetAsync($"ChatSession:{userId}:{messageDto.SessionId}", chatSession.Messages);
+                    await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessage", GetSessions(userId));
+                }
+
+                // 判断是否生成图片
+                Match imageMatch = Regex.Match(chatSession.Messages.LastOrDefault(p => p.Role == MessageRoleEnum.Assistant).Content, @"(?<=\$\[image\]\()(.*?)(?=\))");
+                if (imageMatch.Success)
+                {
+                    string imageContent = imageMatch.Groups[1].Value;
+                    string imageBase64 = "data:image/png;base64," + (await _openAIService.ImageGeneration(new Core.OpenAI.Dto.ImageRequest(imageContent))).Data[0].Base64;
+                    chatSession.Messages.LastOrDefault(p => p.Role == MessageRoleEnum.Assistant).Content = @$"![{imageContent}]({imageBase64})";
                     await _cache.SetAsync($"ChatSession:{userId}:{messageDto.SessionId}", chatSession.Messages);
                     await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessage", GetSessions(userId));
                 }

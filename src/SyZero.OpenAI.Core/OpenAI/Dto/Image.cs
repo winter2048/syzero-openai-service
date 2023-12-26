@@ -20,6 +20,13 @@ namespace SyZero.OpenAI.Core.OpenAI.Dto
 
         [JsonProperty("response_format")]
         public string ResponseFormat { get; set; } = "b64_json";
+
+        public ImageRequest() { }
+
+        public ImageRequest(string prompt)
+        {
+            Prompt = prompt;
+        }
     }
 
     public class ImageEditRequest : ImageRequest

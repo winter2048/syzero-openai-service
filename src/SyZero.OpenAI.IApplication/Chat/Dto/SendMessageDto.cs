@@ -11,5 +11,7 @@ namespace SyZero.OpenAI.IApplication.Chat.Dto
         public string SessionId { get; set; }
 
         public string Message { get; set; }
+
+        public string Model { get; set; } = "gpt-3.5-turbo";
     }
 }
